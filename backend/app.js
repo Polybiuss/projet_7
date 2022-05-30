@@ -1,5 +1,7 @@
 const express = require("express"); // Express indispensable à notre app
 const db = require("./models"); // Utilisation des modèles pour la BDD
+const dotenv = require("dotenv");
+dotenv.config();
 
 // Import des routes ----------------------------------------------------------------------------------------
 const usersRoutes = require("./routes/utilisateur.routes.js");

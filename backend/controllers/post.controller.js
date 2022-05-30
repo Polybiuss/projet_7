@@ -2,18 +2,7 @@ const db = require("../models");
 const jwt = require("jsonwebtoken");
 
 exports.createPost = (req, res, next) => {
-    // Nous avons besoin de récupérer l'userId par l'intermédiaire du token, à defaut du store frontend
-    const token = req.headers.authorization.split(" ")[1];
-    const decodedToken = jwt.verify(token, "RANDOM_TOKEN_SECRET");
-    const userId = decodedToken.userId;
-  
-    // Nous cherchons ensuite l'user correspondant
-    db.Utilisateur.findOne({
-      attributes: ["id", "nom"],
-      where: {
-        id: userId,
-      },
-    })
+  userId = req.auth.userId
         db.Post.create({
           text: req.body.text,
           utilisateurId: userId,
@@ -25,11 +14,10 @@ exports.createPost = (req, res, next) => {
       where: {
         id: req.params.id,
       },
-      // On inclue également les infos user, like, comment, liées au post, qui nous serons utiles 
       include: [
         {
           model: db.Utilisateur,
-          attributes: ["nom", "id"],
+          attributes: ["nom"],
         },
         {
           model: db.Comment,
@@ -56,7 +44,7 @@ exports.createPost = (req, res, next) => {
         "text",
         "createdAt",
         "updatedAt",
-        "UserId",
+        "utilisateurId",
       ],
   
       order: [["createdAt", "DESC"]],
@@ -69,7 +57,7 @@ exports.createPost = (req, res, next) => {
         {
           model: db.Comment,
           order: [["createdAt", "DESC"]],
-          attributes: ["id", "comment", "UserId", "createdAt"],
+          attributes: ["id", "comment", "utilisateurId", "createdAt"],
           include: [
             {
               model: db.Utilisateur,
@@ -83,3 +71,41 @@ exports.createPost = (req, res, next) => {
   
       .catch((error) => res.status(500).json({ error }));
   };
+
+  exports.deletePost = (req, res, next) => {
+    db.Post.findOne({
+      where: {
+        id: req.params.id,
+      },
+    })
+    .then((post) => {
+      if (post.utilisateurid == req.auth.userId || req.auth.isAdmin == true) {
+        post.destroy()
+        .then(() => res.status(200).json({ message: "Commentaire supprimé !" }))
+        .catch((error) => res.status(500).json({ error }));
+      } else {
+        res.status(403).json({ message: "utilisateur non autorisé !"})
+      }
+    })
+    .catch((error) => res.status(500).json({ error }));    
+  };
+
+  exports.updatePost = (req, res, next) => {
+    db.Post.findOne({
+      where: { id: req.params.id },
+    })
+    .then((post) => {
+      if (post.utilisateurid == req.auth.userId) {
+      post.update({
+        text: req.body.text
+      })
+      .then(() => res.status(200).json({
+        message: "post modifié !"
+      }))
+      .catch((error) => res.status(400).json({ error }));
+    } else {
+      res.status(403).json({ message: "utilisateur non autorisé !"})
+    }
+    })
+    .catch((error) => res.status(500).json({ error }));
+};

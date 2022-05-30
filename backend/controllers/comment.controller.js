@@ -2,15 +2,10 @@ const db = require("../models");
 const jwt = require("jsonwebtoken");
 
 exports.createComment = (req, res, next) => {
-    // Nous avons besoin de récupérer l'userId par l'intermédiaire du token, à defaut du store frontend
-    const token = req.headers.authorization.split(" ")[1];
-    const decodedToken = jwt.verify(token, "RANDOM_TOKEN_SECRET");
-    const userId = decodedToken.userId;
-  
+    userId = req.auth.userId
     db.Post.findOne({
       where: {
-        id: req.params.id || null,
-        utilisateurId: userId,
+        id: req.params.postId,
       },
     });
     db.Comment.create({
@@ -26,16 +21,13 @@ exports.createComment = (req, res, next) => {
   exports.getComments = (req, res, next) => {
     db.Comment.findAll({
       where: {
-        PostId: req.params.postId,
+        id: req.params.id,
       },
-      attributes: ["id", "comment", "createdAt", "UserId"],
-  
-      order: [["createdAt", "DESC"]],
-  
+      attributes: ["id", "comment", "createdAt", "utilisateurId"], 
       include: [
         {
-          model: db.User,
-          attributes: ["nom", "id"],
+          model: db.Utilisateur,
+          attributes: ["nom"],
         },
       ],
     })
@@ -49,16 +41,35 @@ exports.createComment = (req, res, next) => {
       where: {
         id: req.params.id,
       },
-    });
-    db.Comment.destroy(
-      {
-        where: {
-          id: req.params.id,
-        },
-      },
-      //{ truncate: true }
-    )
-      .then(() => res.status(200).json({ message: "Commentaire supprimé !" }))
-  
-      .catch((error) => res.status(400).json({ error }));
+    })
+    .then((comment) => {
+      if (comment.utilisateurid == req.auth.userId || req.auth.isAdmin == true) {
+        comment.destroy()
+        .then(() => res.status(200).json({ message: "Commentaire supprimé !" }))
+        .catch((error) => res.status(500).json({ error }));
+      } else {
+        res.status(403).json({ message: "utilisateur non autorisé !"})
+      }
+    })
+    .catch((error) => res.status(500).json({ error }));    
   };
+
+  exports.updateComment = (req, res, next) => {
+    db.Comment.findOne({
+      where: { id: req.params.id },
+    })
+    .then((comment) => {
+      if (comment.utilisateurid == req.auth.userId) {
+      comment.update({
+        comment: req.body.comment
+      })
+      .then(() => res.status(200).json({
+        message: "commentaire modifié !"
+      }))
+      .catch((error) => res.status(400).json({ error }));
+    } else {
+      res.status(403).json({ message: "utilisateur non autorisé !"})
+    }
+    })
+    .catch((error) => res.status(500).json({ error }));
+};

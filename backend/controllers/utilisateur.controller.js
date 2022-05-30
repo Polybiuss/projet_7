@@ -25,7 +25,7 @@ exports.signup = (req, res, next) => {
   exports.login = (req, res, next) => {
     db.Utilisateur.findOne({
       where: {
-        nom: req.body.nom,
+        email: req.body.email,
       },
     }).then((user) => {
       if (!user) {
@@ -40,13 +40,14 @@ exports.signup = (req, res, next) => {
           res.status(200).json({
             // Si OK un token est renvoyé au frontend avec un user id, et un message de bienvenue
             userId: user.id,
+            admin: user.admin,
             token: jwt.sign(
               // Sign permet d'encoder un nouveau token
               { userId: user.id },
-              "RANDOM_TOKEN_SECRET",
+              process.env.TOKEN,
               { expiresIn: "24h" }
             ),
-            message: "Bonjour " + Utilisateur.nom + " ! 🙂",
+            message: "Bonjour " + user.nom + " ! 🙂",
           });
         })
         .catch((error) => res.status(500).json({ error }));
@@ -77,3 +78,50 @@ exports.signup = (req, res, next) => {
   
       .catch((error) => res.status(500).json({ error }));
   };
+
+
+  exports.deleteUtilisateur = (req, res, next) => {
+    db.Utilisateur.findOne({
+      where: {
+        id: req.params.id,
+      },
+    })
+    .then((utilisateur) => {
+      if (utilisateur.id == req.auth.userId) {
+        utilisateur.destroy()
+        .then(() => res.status(200).json({ message: "Commentaire supprimé !" }))
+        .catch((error) => res.status(500).json({ error }));
+      } else {
+        res.status(403).json({ message: "utilisateur non autorisé !"})
+      }
+    })
+    .catch((error) => res.status(500).json({ error }));    
+  };
+
+  exports.updateUtilisateur = (req, res, next) => {
+      db.Utilisateur.findOne({
+        where: { id: req.params.id },
+      })
+      .then((user) => {
+        if (user.id == req.auth.userId) {
+        user.update({
+          nom: req.body.nom
+        })
+        .then(() => res.status(200).json({
+          message: "utilisateur modifié"
+        }))
+        .catch((error) => res.status(400).json({ error }));
+      } else {
+        res.status(403).json({ message: "utilisateur non autorisé !"})
+      }
+      })
+      .catch((error) => res.status(500).json({ error }));
+  };
+
+  exports.userProfil = (req, res, next) => {
+    db.Utilisateur.findOne({
+      where: { id: req.auth.userId },
+    })
+        .then(user => res.status(200).json(user))
+        .catch(error => res.status(500).json(error))
+};
