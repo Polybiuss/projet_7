@@ -19,11 +19,11 @@ exports.createComment = (req, res, next) => {
   };
 
   exports.getComments = (req, res, next) => {
-    db.Comment.findAll({
+    db.Comment.findOne({
       where: {
         id: req.params.id,
       },
-      attributes: ["id", "comment", "createdAt", "utilisateurId"], 
+      attributes: ["id", "comment", "createdAt", "utilisateurId", "postId"], 
       include: [
         {
           model: db.Utilisateur,

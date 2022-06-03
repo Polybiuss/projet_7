@@ -1,14 +1,14 @@
-<template>
+<template lang="fr">
   <div class="login">
     <form action="get" class="login__form">
-      <h1>Se connecter :</h1>
+      <h2>Se connecter :</h2>
       <div class="login__form__input">
-        <label for="name">Votre email : </label>
-        <input type="email" v-model="dataLogin.email" name="email" />
+        <label for="emailLogin">Votre email : </label>
+        <input type="email" v-model="dataLogin.email" name="email" id="emailLogin" />
       </div>
       <div class="login__form__input">
-        <label for="password">Votre mot de passe : </label>
-        <input type="password" v-model="dataLogin.mdp" />
+        <label for="passwordLogin">Votre mot de passe : </label>
+        <input type="password" name="password" v-model="dataLogin.mdp" id="passwordLogin" />
       </div>
     
     <button @click.prevent="logIn" type="submit">Se connecter</button>
@@ -47,7 +47,10 @@ export default {
             localStorage.setItem('admin', response.data.admin);
             router.push({ path: '/post' });
           })
-          .catch(error => console.log(error));
+          .catch(error => {
+            console.log(error.response.data);
+            alert(error.response.data.error);
+            });
       } else {
         console.log("oops !");
       }
@@ -68,7 +71,7 @@ export default {
       align-items: center;
       padding: 5px;
       & button{
-        font-size: 2rem;
+        font-size: 1rem;
         margin: 5px;
         border-radius: 5px;
         border: none;
@@ -84,7 +87,7 @@ export default {
         & input{
           border-radius: 5px;
           border: none;
-          font-size: 2rem;
+          width: 100%;
         }
       }
     }

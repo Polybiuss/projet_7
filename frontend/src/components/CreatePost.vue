@@ -2,7 +2,7 @@
 <div class="newpost">
     <form action="get" class="newpost__form">
         <label for="newpost">Nouvelle Publication</label>
-        <textarea name="newpost" cols="30" rows="5" v-model="NewPost.text"></textarea>
+        <textarea name="newpost" id="newpost" cols="30" rows="5" v-model="NewPost.text"></textarea>
         <button @click.prevent="PostCreate" type="submit">Postez</button>
     </form>
  
@@ -33,6 +33,7 @@ export default {
                 })
                 .then(response => {
                     console.log(response);
+                    window.location.reload();
                 })
                 .catch(e => {
                     console.log(e);

@@ -12,7 +12,7 @@ module.exports = (req, res, next) => {
       // On vérifie si la requête contient un id user, et nous le comparons avec celui du token
       throw "Invalid user ID"; // Erreur si aucune correspondance
     } else {
-      req.auth = {userId};
+      req.auth = { userId };
       db.Utilisateur.findOne({
         where: {
         id: userId,

@@ -1,9 +1,8 @@
 <template>
-<HeaderApp/>
-
+<div v-if="userId">
   <div class="onePost">
-    <div class="onePost__user" v-for="(value, key) in post.utilisateur" :key="`${ key }`">
-        <h3>{{ value }}</h3>
+    <div class="onePost__user" >
+        <h3>{{ post.name }}</h3>
         <p>Ajouté à {{ createdDate(post.createdAt) }}</p>
     </div>
         <div class="onePost__text">
@@ -19,7 +18,7 @@
              </div>
         </div>
     </div>
-    <h2>commentaires</h2>
+    <h2>Commentaires</h2>
     <div v-bind:id="comment.id" v-for="comment in post.comments" :key="comment.id" class="comments">
         <div class="comments__user" v-for="(value, key) in comment.utilisateur" :key="`${ key }`">
             <h3>{{ value }}</h3>
@@ -27,35 +26,38 @@
         </div>
         <div class="comments__text">
              <h2>{{ comment.comment }}</h2>
-            <router-link :to="{name: 'OneComment' , params: { id: comment.id }}">modifer votre commentaire</router-link>
+            <router-link :to="{name: 'OneComment' , params: { id: comment.id }}" v-if="admin == true || userId == post.utilisateurId">modifer votre commentaire</router-link>
         </div>
     </div>
         <div class="newcomment">
             <div class="newcomment__content">
-                <h3>Ajouter un commentaire</h3>
+                <label for="newcomment">Ajouter un commentaire</label>
                 <div class="newcomment__content__modify">
-                    <textarea type="text" v-model="newComment.comment"></textarea>
+                    <textarea type="text" v-model="newComment.comment" id="newcomment"></textarea>
                     <button @click.prevent="commentCreate" type="submit">Ajouté un commentaire</button>
                 </div>
            
             </div>
             
         </div>
-          
+</div>
+<div v-else class="not__connected">
+    <h2>Vous devez vous connecté pour ce site web</h2>
+    <router-link to="/">aller à la page de connexion</router-link>
+    </div>    
           
 </template>
 
 <script>
+import router from "../router/index.js";
 import axios from "axios"
-import HeaderApp from "../components/HeaderApp.vue"
 export default {
     name: "OnePost",
-    components: {
-        HeaderApp,
-    },
     data() {
         return {
-            post: {},
+            post: {
+                name:null
+            },
             userId: null,
             admin: null,
             newComment: {
@@ -79,6 +81,8 @@ export default {
             .then(response => {
                 console.log(response.data);
                 this.post = response.data;
+                this.postUpdate.text = response.data.text;
+                this.post.name = response.data.utilisateur.nom;
             })
             .catch(e => {
                 console.log(e);
@@ -97,6 +101,7 @@ export default {
                 })
                 .then(response => {
                     console.log(response);
+                    window.location.reload();
                 })
                 .catch(e => {
                     console.log(e);
@@ -119,6 +124,7 @@ export default {
             })
             .then(response =>{
                 console.log(response);
+                window.location.reload();
             })
             .catch(e =>{
                 console.log(e);
@@ -137,6 +143,8 @@ export default {
             })
             .then(response =>{
                 console.log(response);
+                alert(response.data.message);
+                router.replace({ path: '/post' })
             })
             .catch(e =>{
                 console.log(e);
@@ -176,7 +184,7 @@ h2{
             padding: 5px;
             & p{
                 font-size: 12px;
-                color: grey;
+                color: rgb(0, 0, 0);
                 padding: 5px;
             }
             & h3{
@@ -228,7 +236,7 @@ h2{
             padding: 5px;
             & p{
                 font-size: 12px;
-                color: grey;
+                color: rgb(0, 0, 0);
                 padding: 5px;
             }
             & h3{
@@ -288,6 +296,10 @@ h2{
             }
             }
         }
+    }
+    .not__connected{
+        text-align: center;
+        margin: 20px auto;
     }
 
 </style>

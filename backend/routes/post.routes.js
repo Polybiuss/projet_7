@@ -12,7 +12,7 @@ router.delete("/:id", auth, postCtrl.deletePost);
 router.put("/:id", auth, postCtrl.updatePost);
 
 router.post("/:postId/comments", auth, commentCtrl.createComment);
-router.get("/:id/comments", auth, commentCtrl.getComments);
+router.get("/comments/:id", auth, commentCtrl.getComments);
 router.delete("/comments/:id", auth, commentCtrl.deleteComment);
 router.put("/comments/:id", auth, commentCtrl.updateComment);
 

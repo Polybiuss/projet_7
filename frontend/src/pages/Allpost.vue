@@ -1,8 +1,7 @@
 <template>
-<HeaderApp/>
-<CreatePost/>
+<CreatePost v-if="userId" />
 <h1>Actualités</h1>
-<div class="actuality">
+<div class="actuality" v-if="userId">
 <div v-for="post in posts" :key="post.id" class="actuality__post">
 <router-link :to="{name: 'OnePost' , params: { id: post.id }}" >
      <div class="actuality__post__user">
@@ -22,22 +21,26 @@
 </router-link>
 </div>
 </div>
+<div v-else class="not__connected">
+    <h2>Vous devez vous connecté pour ce site web</h2>
+    <router-link to="/">aller à la page de connexion</router-link>
+    </div>
 
 </template>
 
 <script>
 import axios from "axios";
 import CreatePost from "../components/CreatePost.vue"
-import HeaderApp from "../components/HeaderApp.vue"
 export default {
     name: "AllPost",
     components: {
         CreatePost,
-        HeaderApp
     },
     data: function() {
         return {
      posts: [],
+     userId: null,
+     admin: null,
     };
     },
      methods: {
@@ -51,6 +54,7 @@ export default {
         .then(response => {
             this.posts = response.data;
             console.log(response.data);
+            
         })
         .catch(e => {
             console.log(e);
@@ -73,6 +77,9 @@ export default {
   },
     mounted() {
         this.getAllPosts();
+        this.userId = localStorage.getItem('userId');
+        console.log(this.userId);
+        this.admin = localStorage.getItem('admin');
     }
 }
 </script>
@@ -91,7 +98,7 @@ export default {
         &__post{
             & a{
                 text-decoration: none;
-                color: rgb(87, 84, 84);
+                color: rgb(0, 0, 0);
                 display: flex;
                 justify-content: center;
                 flex-flow: column;
@@ -135,6 +142,10 @@ export default {
         }
        
         
+    }
+    .not__connected{
+        text-align: center;
+        margin: 20px auto;
     }
 
 </style>

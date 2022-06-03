@@ -1,7 +1,7 @@
 <template>
-  <div class="header"><router-link to="/post"><img src="../assets/logo.svg" alt="" class="header__img"></router-link>
+  <div class="header"><router-link to="/post"><img src="../assets/logo.svg" alt="logo" class="header__img"></router-link>
     <div>
-        <router-link to="/user">Profil</router-link>
+        <router-link class="profil" to="/user">Profil</router-link>
     </div>
   </div>
 </template>
@@ -25,6 +25,11 @@ export default {
             display: flex;
             width: 200px;
             height: 50px;
+        }
+        & .profil{
+            text-decoration: none;
+            color: black;
+            
         }
     }
 

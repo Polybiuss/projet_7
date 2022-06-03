@@ -1,18 +1,18 @@
-<template>
+<template lang="fr">
 <div class="signup">
     <form action="get" class="signup__form">
-      <h1>S'inscrire :</h1>
+      <h2>S'inscrire :</h2>
       <div class="signup__form__input">
         <label for="name">Votre nom : </label>
-        <input type="text" v-model="dataSignup.nom" name="name"/>
+        <input type="text" v-model="dataSignup.nom" name="name" id="name"/>
       </div>
       <div class="signup__form__input">
         <label for="email">Votre email : </label>
-        <input type="text" v-model="dataSignup.email" name="email"/>
+        <input type="text" v-model="dataSignup.email" name="email" id="email"/>
       </div>
       <div class="signup__form__input">
         <label for="password">Votre mot de passe : </label>
-        <input type="password" v-model="dataSignup.mdp" name="password"/>
+        <input type="password" v-model="dataSignup.mdp" name="password" id="password"/>
       </div>
         <button @click.prevent="SignIn" type="submit">Sinscrire</button>
     </form>
@@ -44,7 +44,10 @@ export default {
                 .then(response => {
                     console.log(response);
                 })
-                .catch(error => console.log(error));
+                .catch(error => {
+            console.log(error.response.data);
+            alert(error.response.data.error);
+            });
             }   else {
                 console.log("error !");
             }
@@ -66,7 +69,7 @@ export default {
       align-items: center;
       padding: 5px;
       & button{
-        font-size: 2rem;
+        font-size: 1rem;
         margin: 5px;
         border-radius: 5px;
         border: none;
@@ -82,7 +85,6 @@ export default {
         & input {
             border-radius: 5px;
             border: none;
-            font-size: 2rem;
         }
       }
     }

@@ -1,38 +1,44 @@
 <template>
-<HeaderApp/>
-  <div v-for="content in comment" :key="content" class="comment">
-      <div class="comment__user" v-for="(value, key) in content.utilisateur" :key="`${ key }`">
-        <h3>{{ value }}</h3>
-        <p>Ajouté à {{ createdDate(content.createdAt) }}</p>
+
+<div v-if="userId">
+  <div class="comment" >
+      <div class="comment__user">
+        <h3>{{ comment.name }}</h3>
+        <p>Ajouté à {{ createdDate(comment.createdAt) }}</p>
     </div>
      <div class="comment__text">
-             <h2>{{ content.comment }}</h2>
-             <button v-on:click="isHidden = !isHidden" class="btn__modify" v-if="admin == true || userId == content.utilisateurId" placeholder="modifier votre poste">modifer votre post</button>
+             <h2>{{ comment.comment }}</h2>
+             <button v-on:click="isHidden = !isHidden" class="btn__modify" v-if="admin == true || userId == comment.utilisateurId" placeholder="modifier votre commentaire">modifer votre commentaire</button>
              <div class="comment__text__modify" v-if="!isHidden">
-                <textarea rows="5" v-model="updateComment.comment" type="text" v-if="admin == true || userId == content.utilisateurId" placeholder="modifier votre poste"></textarea>
+                <textarea rows="5" v-model="updateComment.comment" type="text" v-if="admin == true || userId == comment.utilisateurId" placeholder="modifier votre commentaire"></textarea>
              <div class="comment__text__modify__button">
-                 <button @click.prevent="commentUpdate(content.id)" v-if="admin == true || userId == content.utilisateurId" type="submit">Modifer</button>
-                 <button @click.prevent="deleteComment(content.id)" v-if="admin == true || userId == content.utilisateurId" type="submit">Supprimer</button>
+                 <button @click.prevent="commentUpdate(comment.id)" v-if="admin == true || userId == comment.utilisateurId" type="submit">Modifer</button>
+                 <button @click.prevent="deleteComment(comment.id)" v-if="admin == true || userId == comment.utilisateurId" type="submit">Supprimer</button>
              </div>
                 
              </div>
         </div>
 
   </div>
+  </div>
+  <div v-else class="not__connected">
+    <h2>Vous devez vous connecté pour ce site web</h2>
+    <router-link to="/">aller à la page de connexion</router-link>
+    </div>
   
 </template>
 
 <script>
+import router from "../router/index.js";
 import axios from "axios"
-import HeaderApp from "../components/HeaderApp.vue"
+
 export default {
     name: "OneComment",
-    components: {
-        HeaderApp,
-    },
     data() {
         return {
-            comment: {},
+            comment: {
+                name: null
+            },
             userId: null,
             admin: null,
             updateComment: {
@@ -45,7 +51,7 @@ export default {
         getComment() {
             const id = this.$route.params.id;
             axios
-            .get(`http://localhost:3000/api/posts/${id}/comments`, {
+            .get(`http://localhost:3000/api/posts/comments/${id}`, {
                 headers: {
                     Authorization: "Bearer " + localStorage.getItem("token")
                 }
@@ -53,6 +59,8 @@ export default {
             .then(response => {
                 console.log(response.data);
                 this.comment = response.data;
+                this.updateComment.comment = response.data.comment;
+                this.comment.name = response.data.utilisateur.nom;
             })
             .catch(e => {
                 console.log(e);
@@ -76,6 +84,9 @@ export default {
                 })
                 .then(response => {
                     console.log(response);
+                    alert(response.data.message);
+                    const id = this.comment.postId;
+                    router.replace({ path: `/post/${id}` })
                 })
                 .catch(e =>{
                     console.log(e);
@@ -94,6 +105,9 @@ export default {
             })
             .then(response =>{
                 console.log(response);
+                alert(response.data.message);
+                const id = this.comment.postId;
+                router.replace({ path: `/post/${id}` });
             })
             .catch(e =>{
                 console.log(e);
@@ -122,7 +136,7 @@ export default {
             padding: 5px;
             & p{
                 font-size: 12px;
-                color: grey;
+                color: rgb(0, 0, 0);
                 padding: 5px;
             }
             & h3{
@@ -162,6 +176,10 @@ export default {
             }
 
         }
+    }
+    .not__connected{
+        text-align: center;
+        margin: 20px auto;
     }
 
 </style>

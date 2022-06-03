@@ -79,12 +79,13 @@ exports.createPost = (req, res, next) => {
       },
     })
     .then((post) => {
+      console.log(req.auth.userId);
       if (post.utilisateurid == req.auth.userId || req.auth.isAdmin == true) {
         post.destroy()
-        .then(() => res.status(200).json({ message: "Commentaire supprimé !" }))
+        .then(() => res.status(200).json({ message: "Post supprimé !" }))
         .catch((error) => res.status(500).json({ error }));
       } else {
-        res.status(403).json({ message: "utilisateur non autorisé !"})
+        res.status(403).json({ message: "Utilisateur non autorisé !"})
       }
     })
     .catch((error) => res.status(500).json({ error }));    
@@ -104,7 +105,7 @@ exports.createPost = (req, res, next) => {
       }))
       .catch((error) => res.status(400).json({ error }));
     } else {
-      res.status(403).json({ message: "utilisateur non autorisé !"})
+      res.status(403).json({ message: "Utilisateur non autorisé !"})
     }
     })
     .catch((error) => res.status(500).json({ error }));
