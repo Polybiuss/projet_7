@@ -7,9 +7,9 @@
     </div>
         <div class="onePost__text">
              <h2>{{ post.text }}</h2>
-             <button v-on:click="isHidden = !isHidden" class="btn__modify" v-if="admin == true || userId == post.utilisateurId" placeholder="modifier votre poste">modifer votre post</button>
+             <button v-on:click="isHidden = !isHidden" class="btn__modify" v-if="admin = true || userId == post.utilisateurId" placeholder="modifier votre poste">modifer votre post</button>
              <div class="onePost__text__modify" v-if="!isHidden">
-                <textarea rows="5" v-model="postUpdate.text" type="text" v-if="admin == true || userId == post.utilisateurId" placeholder="modifier votre poste"></textarea>
+                <textarea rows="5" v-model="postUpdate.text" type="text" v-if="admin = true || userId == post.utilisateurId" placeholder="modifier votre poste"></textarea>
              <div class="onePost__text__modify__button">
                  <button @click.prevent="updatePost" v-if="admin == true || userId == post.utilisateurId" type="submit">Modifer</button>
                  <button @click.prevent="deletePost" v-if="admin == true || userId == post.utilisateurId" type="submit">Supprimer</button>
@@ -22,11 +22,11 @@
     <div v-bind:id="comment.id" v-for="comment in post.comments" :key="comment.id" class="comments">
         <div class="comments__user" v-for="(value, key) in comment.utilisateur" :key="`${ key }`">
             <h3>{{ value }}</h3>
-            <p>Ajouté à {{ createdDate(post.createdAt) }}</p>
+            <p>Ajouté à {{ createdDate(comment.createdAt) }}</p>
         </div>
         <div class="comments__text">
              <h2>{{ comment.comment }}</h2>
-            <router-link :to="{name: 'OneComment' , params: { id: comment.id }}" v-if="admin == true || userId == post.utilisateurId">modifer votre commentaire</router-link>
+            <router-link :to="{name: 'OneComment' , params: { id: comment.id }}" v-if="admin = true || userId == comment.utilisateurId">modifer votre commentaire</router-link>
         </div>
     </div>
         <div class="newcomment">

@@ -1,5 +1,4 @@
 const db = require("../models");
-const jwt = require("jsonwebtoken");
 
 exports.createPost = (req, res, next) => {
   userId = req.auth.userId
@@ -22,7 +21,7 @@ exports.createPost = (req, res, next) => {
         {
           model: db.Comment,
           order: [["createdAt", "DESC"]], // Affichage des commentaires dans un ordre donné
-          attributes: ["id", "comment", "UtilisateurId"],
+          attributes: ["id", "comment", "utilisateurId", "createdAt"],
           include: [
             {
               model: db.Utilisateur,

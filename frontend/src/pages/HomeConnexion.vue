@@ -1,4 +1,5 @@
-<template lang="fr">
+<template>
+  <h1>Bienvenue sur le réseaux social Groupomania</h1>
   <LoginUser/>
   <SignupUser/>
 </template>

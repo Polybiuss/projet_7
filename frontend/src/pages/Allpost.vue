@@ -1,6 +1,7 @@
 <template>
+<h1>Page D'accueil</h1>
 <CreatePost v-if="userId" />
-<h1>Actualités</h1>
+<h2>Actualités</h2>
 <div class="actuality" v-if="userId">
 <div v-for="post in posts" :key="post.id" class="actuality__post">
 <router-link :to="{name: 'OnePost' , params: { id: post.id }}" >
