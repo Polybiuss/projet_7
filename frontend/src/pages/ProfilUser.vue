@@ -91,6 +91,7 @@ export default {
             .then(response => {
                 console.log(response);
                 localStorage.clear();
+                router.replace({ path: '/' });
             })
             .catch(e => {
                 console.log(e);

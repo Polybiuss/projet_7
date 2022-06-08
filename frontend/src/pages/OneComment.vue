@@ -8,12 +8,12 @@
     </div>
      <div class="comment__text">
              <h2>{{ comment.comment }}</h2>
-             <button v-on:click="isHidden = !isHidden" class="btn__modify" v-if="admin = true || userId == comment.utilisateurId" placeholder="modifier votre commentaire">modifer votre commentaire</button>
+             <button v-on:click="isHidden = !isHidden" class="btn__modify" v-if="userId == comment.utilisateurId || admin == 'true'" placeholder="modifier votre commentaire">modifer votre commentaire</button>
              <div class="comment__text__modify" v-if="!isHidden">
-                <textarea rows="5" v-model="updateComment.comment" type="text" v-if="admin = true || userId == comment.utilisateurId" placeholder="modifier votre commentaire"></textarea>
+                <textarea rows="5" v-model="updateComment.comment" type="text" v-if="userId == comment.utilisateurId || admin == 'true'" placeholder="modifier votre commentaire"></textarea>
              <div class="comment__text__modify__button">
-                 <button @click.prevent="commentUpdate(comment.id)" v-if="admin = true || userId == comment.utilisateurId" type="submit">Modifer</button>
-                 <button @click.prevent="deleteComment(comment.id)" v-if="admin = true || userId == comment.utilisateurId" type="submit">Supprimer</button>
+                 <button @click.prevent="commentUpdate(comment.id)" v-if="userId == comment.utilisateurId || admin == 'true'" type="submit">Modifer</button>
+                 <button @click.prevent="deleteComment(comment.id)" v-if="userId == comment.utilisateurId || admin == 'true'" type="submit">Supprimer</button>
              </div>
                 
              </div>

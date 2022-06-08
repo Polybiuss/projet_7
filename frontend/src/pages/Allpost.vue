@@ -15,6 +15,7 @@
          </h3>
      </div>
      <div class="actuality__post__comment">
+         <router-link :to="{name: 'OnePost' , params: { id: post.id }}" v-if="userId == post.utilisateurId">modifier votre post</router-link>
          <h4>
              {{ nmbComments(post.comments) }} commentaires
          </h4>
@@ -86,7 +87,7 @@ export default {
 </script>
 
 <style lang="scss">
-    h1{
+    h1, h2{
         font-size: 20px;
         text-align: center;
     }
@@ -132,12 +133,21 @@ export default {
             }
             }
             &__comment{
-                background-color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: white;
             padding: 5px;
             margin-top: 10px;
             text-align: right;
             & h4 {
                 font-size: 12px;
+            }
+            & a{
+                margin-top: 0px;
+                &:hover{
+                    background-color: #f7502f;
+                }
             }
             }
         }

@@ -59,10 +59,11 @@ export default {
 
 <style lang="scss">
 .signup{
-    width: 55%;
+    width: 100%;
     margin: 5px auto;
     background-color: #FD2D01;
     border: 1px solid black;
+    border-top: none;
     &__form{
       display: flex;
       flex-flow: column;
